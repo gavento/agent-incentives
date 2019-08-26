@@ -29,7 +29,8 @@ NOISE_MOVES = [(x, y) for y in range(-RES, RES) for x in range(-RES, RES)
 
 # Discounting factor at every step
 DISCOUNT = 0.95
-BNAME = f"revmod-{datetime.datetime.now().strftime('%Y%m%d-%H%M%S')}"
+BNAME = "revmod-" + datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
+
 
 def E(p):
     "Noise potential at a value."
@@ -154,8 +155,10 @@ def main():
                              marker=dict(size=12)),
                   col=2,
                   row=1)
-    plotly.io.write_html(fig, f"{BNAME}-potential-values.html", include_plotlyjs="directory", auto_play=False)
-
+    plotly.io.write_html(fig,
+                         BNAME + "-potential-values.html",
+                         include_plotlyjs="directory",
+                         auto_play=False)
 
     EDS = expected_dirs(Q)
     fig2 = plotly.figure_factory.create_quiver(
@@ -165,12 +168,15 @@ def main():
         v=[ed[1] for ed in EDS],
         scale=1.0,
     )
-    fig2.add_trace(go.Scatter(x=[START[0] / (RES - 1)],
-                             y=[START[1] / (RES - 1)],
-                             mode='markers',
-                             marker=dict(size=12)))
-    plotly.io.write_html(fig2, f"{BNAME}-actions.html", include_plotlyjs="directory", auto_play=False)
-
+    fig2.add_trace(
+        go.Scatter(x=[START[0] / (RES - 1)],
+                   y=[START[1] / (RES - 1)],
+                   mode='markers',
+                   marker=dict(size=12)))
+    plotly.io.write_html(fig2,
+                         BNAME + "-actions.html",
+                         include_plotlyjs="directory",
+                         auto_play=False)
 
     fig.show('firefox')
     fig2.show('firefox')
