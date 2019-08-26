@@ -1,4 +1,5 @@
 import itertools
+import datetime
 
 import numpy as np
 import plotly
@@ -6,7 +7,7 @@ import plotly.figure_factory
 import plotly.graph_objs as go
 import tqdm
 
-RES = 21
+RES = 11
 INDICES = [(x, y) for y in range(RES) for x in range(RES)]
 POINTS = [(x / (RES - 1), y / (RES - 1)) for y in range(RES)
           for x in range(RES)]
@@ -28,7 +29,7 @@ NOISE_MOVES = [(x, y) for y in range(-RES, RES) for x in range(-RES, RES)
 
 # Discounting factor at every step
 DISCOUNT = 0.95
-
+BNAME = f"revmod-{datetime.datetime.now().strftime('%Y%m%d-%H%M%S')}"
 
 def E(p):
     "Noise potential at a value."
@@ -117,7 +118,7 @@ def q_to_vec(q):
 def main():
     Q = Q0
     pb = tqdm.tqdm()
-    for i in range(20):  #while True:
+    for i in range(10):  #while True:
         oldQ = Q
         Q = iterate_q(Q)
         dq = np.max(np.abs(q_to_vec(oldQ) - q_to_vec(Q)))
@@ -153,8 +154,8 @@ def main():
                              marker=dict(size=12)),
                   col=2,
                   row=1)
+    plotly.io.write_html(fig, f"{BNAME}-potential-values.html", include_plotlyjs="directory", auto_play=False)
 
-    fig.show('firefox')
 
     EDS = expected_dirs(Q)
     fig2 = plotly.figure_factory.create_quiver(
@@ -168,6 +169,10 @@ def main():
                              y=[START[1] / (RES - 1)],
                              mode='markers',
                              marker=dict(size=12)))
+    plotly.io.write_html(fig2, f"{BNAME}-actions.html", include_plotlyjs="directory", auto_play=False)
+
+
+    fig.show('firefox')
     fig2.show('firefox')
 
 
