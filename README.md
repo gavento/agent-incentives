@@ -12,4 +12,4 @@ The value drift is modelled as normal distribution step biased by a (fixed) pote
 
 ## 1D results
 
-<iframe src=''></iframe>
+<iframe src='https://raw.githubusercontent.com/gavento/agent-incentives/master/revmod-1d-20190827-183919-all-disc08.html'></iframe>
