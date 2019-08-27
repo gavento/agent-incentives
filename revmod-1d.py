@@ -151,7 +151,7 @@ def main():
                    y=[Q[(START, p)]/10 for p in INDICES]))
     fig2.add_trace(
         go.Scatter(x=[START / (RES - 1)],
-                   y=[Q[(START, START)]],
+                   y=[Q[(START, START)]/10],
                    name="Real agent value",
                    mode='markers',
                    marker=dict(size=12)))
