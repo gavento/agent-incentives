@@ -7,7 +7,7 @@ import plotly.figure_factory
 import plotly.graph_objs as go
 import tqdm
 
-RES = 26
+RES = 21
 INDICES = [x for x in range(RES)]
 POINTS = [x / (RES - 1) for x in range(RES)]
 
@@ -118,13 +118,13 @@ def q_to_vec(q):
 def main():
     Q = Q0
     pb = tqdm.tqdm()
-    for i in range(500):  #while True:
+    for i in range(1000):  #while True:
         oldQ = Q
         Q = iterate_q(Q)
         dq = np.max(np.abs(q_to_vec(oldQ) - q_to_vec(Q)))
         pb.update()
         pb.set_postfix(deltaQ=dq)
-        if dq < 0.05:
+        if dq < 0.01:
             break
     pb.close()
 
@@ -134,7 +134,8 @@ def main():
         y=[.5 for p in INDICES],
         u=[ed for ed in EDsN],
         v=[0.1 for ed in EDsN],
-        scale=0.3,
+        scale=1,
+        arrow_scale=0.1,
         name="Mean noise effect",
     )
     fig2 = plotly.figure_factory.create_quiver(
@@ -142,31 +143,33 @@ def main():
         y=[0 for p in INDICES],
         u=[ed for ed in EDsA],
         v=[0.1 for ed in EDsA],
-        scale=0.3,
-        name="Mean actions taken by agent with value at point",
+        scale=1,
+        arrow_scale=0.1,
+        name="Mean agent actions (value at point)",
     )
     fig2.add_trace(
-        go.Scatter(name="Values for agent with real value 0.6 [/10]",
+        go.Scatter(name="Values for agent with value 0.6 [/10]",
                    x=[p for p in POINTS],
                    y=[Q[(START, p)]/10 for p in INDICES]))
     fig2.add_trace(
         go.Scatter(x=[START / (RES - 1)],
                    y=[Q[(START, START)]/10],
                    name="Real agent value",
+                   showlegend=False,
                    mode='markers',
                    marker=dict(size=12)))
     fig2.add_trace(go.Scatter(
         x=[p for p in POINTS],
         y=[E(p) for p in INDICES],
         name="Noise energy potential",
-#        yaxis='y2',
     ))
     fig2.add_trace(fig2a.data[0])
     fig2.layout.update(fig2a.layout)
     fig2.layout.title = "Discounting {:.3f}, move radius {:.3f}, noise stddev {:.3f}".format(DISCOUNT, MOVE_RANGE, NOISE_DEV)
+    fig2.update_layout(legend_orientation="h")
 
     plotly.io.write_html(fig2,
-                         BNAME + "-all.html",
+                         BNAME + ("-all-disc{:.2f}".format(DISCOUNT).replace('.', '')) + ".html",
                          include_plotlyjs="directory",
                          auto_play=False)
     fig2.show('firefox')
